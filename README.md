@@ -14,3 +14,17 @@ You will need the LaunchDarkly C library installed and the library in the LD_LIB
 ## Support
 
 This SDK is not supported by LaunchDarkly. 
+
+## Build
+
+```
+$~  perl Makefile.pl
+$~  make
+$~  make install
+```
+
+## Run 
+
+```
+$~  perl -MXS::LaunchDarkly::ld sample.pl
+```
