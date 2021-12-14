@@ -6,6 +6,10 @@ my $sdkKey = "SDK-KEY";
 my $timeout = 3000;
 my $userKey = "123-456-789-000";
 
+my $ldClient = XS::LaunchDarkly::ld->new ();
+
+print $ldClient->get_string();
+
 # Create Client and Set User Key / Request Context ID
 XS::LaunchDarkly::ld::CreateClient($sdkKey, $timeout);
 XS::LaunchDarkly::ld::UserNew($userKey);

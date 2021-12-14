@@ -200,6 +200,9 @@ int ClientClose() {
     return 1;
 }
 
+/* Louis test */
+typedef struct LDClient * XS__LaunchDarkly__ld;
+
 /* End of C Code */
 
 MODULE = XS::LaunchDarkly::ld  PACKAGE = XS::LaunchDarkly::ld
@@ -209,6 +212,39 @@ PROTOTYPES: ENABLE
 
  # XS comments begin with " #" to avoid them being interpreted as pre-processor
  # directives
+
+TYPEMAP: <<HERE
+LDClient *  T_PTROBJ
+XS::LaunchDarkly::ld    T_PTROBJ
+HERE
+
+ # start potential perl object code
+
+XS::LaunchDarkly::ld
+new (char * class, ...)
+CODE:
+        RETVAL = calloc (1, sizeof (client));
+        if (! RETVAL) {
+                Perl_croak ("No memory for %s", class);
+        }
+OUTPUT:
+        RETVAL
+
+void
+DESTROY (ldClient)
+        XS::LaunchDarkly::ld ldClient;
+CODE:
+        free (ldClient);
+
+const char *
+get_string (ldClient)
+        XS::LaunchDarkly::ld ldClient;
+CODE:
+        RETVAL = "Louis test";
+OUTPUT:
+        RETVAL
+
+ # End potential perl object code
 
 int
 CreateClient(char * key, int timeout)
