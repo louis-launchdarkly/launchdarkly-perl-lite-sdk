@@ -6,9 +6,22 @@ my $sdkKey = "SDK-KEY";
 my $timeout = 3000;
 my $userKey = "123-456-789-000";
 
-my $ldClient = XS::LaunchDarkly::ld->new ();
+my $ldClient = XS::LaunchDarkly::ld->buildLDClient($sdkKey, $timeout);
 
-print $ldClient->get_string();
+print $ldClient;
+print "\n";
+# print $ldClient->buildLDClient($sdkKey, $timeout);
+print $ldClient->{_client}->get_string();
+$ldClient->getSdkKey();
+print "Sleep for a bit\n";
+sleep(5);
+my $isInit = $ldClient->{_client}->is_initialized();
+
+if($isInit) {
+	print "Initialzied\n";
+} else {
+	print "Is not initialized\n";
+}
 
 # Create Client and Set User Key / Request Context ID
 XS::LaunchDarkly::ld::CreateClient($sdkKey, $timeout);
@@ -31,8 +44,16 @@ XS::LaunchDarkly::ld::BuildCustomAttributes();
 # Optionally, set all attriutes private 
 #XS::LaunchDarkly::ld::ConfigSetAllAttributesPrivate(1);
 
+my $boolFg = $ldClient->getBoolVariation("first-flag-in-ld", 0);
+if ($boolFg == 1) {
+	print "Louis Bool Variation: True\n";
+}
+else {
+	print "Louis Bool Variation: False\n";
+}
+
 # Boolean flag example - include flag name and fallback value 
-my $boolFlag = XS::LaunchDarkly::ld::BoolVariation("bool-flag", 0);
+my $boolFlag = XS::LaunchDarkly::ld::BoolVariation("first-flag-in-ld", 0);
 if ($boolFlag == 1) {
 	print "Bool Variation: True\n";
 }
@@ -41,18 +62,18 @@ else {
 }
 
 # Number flag example
-my $intFlag = XS::LaunchDarkly::ld::IntVariation("number-flag", 0);
-print "Int Variation: $intFlag\n";
+# my $intFlag = XS::LaunchDarkly::ld::IntVariation("number-flag", 0);
+# print "Int Variation: $intFlag\n";
 
 # String flag example
-my $stringFlag = XS::LaunchDarkly::ld::StringVariation("test-string", "Oakland");
-print "String Variation: $stringFlag\n";
+# my $stringFlag = XS::LaunchDarkly::ld::StringVariation("test-string", "Oakland");
+# print "String Variation: $stringFlag\n";
 
 # Flush events
 XS::LaunchDarkly::ld::ClientFlush();
 
 # Give the library time to flush all events just to be safe
-sleep(15);
+sleep(5);
 
 # Clean up the user and client 
 XS::LaunchDarkly::ld::UserFree();

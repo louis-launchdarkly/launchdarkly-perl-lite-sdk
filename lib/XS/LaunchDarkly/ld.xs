@@ -221,12 +221,14 @@ HERE
  # start potential perl object code
 
 XS::LaunchDarkly::ld
-new (char * class, ...)
+new (char * class, char * sdkKey, int timeout)
 CODE:
         RETVAL = calloc (1, sizeof (client));
         if (! RETVAL) {
                 Perl_croak ("No memory for %s", class);
         }
+        struct LDConfig * cfg = LDConfigNew(sdkKey);
+        RETVAL = LDClientInit(cfg, timeout);
 OUTPUT:
         RETVAL
 
@@ -240,9 +242,25 @@ const char *
 get_string (ldClient)
         XS::LaunchDarkly::ld ldClient;
 CODE:
-        RETVAL = "Louis test";
+        RETVAL = "Louis test\n";
 OUTPUT:
         RETVAL
+
+int
+is_initialized(ldClient)
+        XS::LaunchDarkly::ld ldClient;
+CODE:
+        RETVAL = LDClientIsInitialized(ldClient);
+OUTPUT:
+        RETVAL
+
+bool
+get_bool_variation(XS::LaunchDarkly::ld ldClient, char * flagKey, bool defaultValue)
+CODE:
+        RETVAL = LDBoolVariation(ldClient, user, flagKey, defaultValue, NULL);
+OUTPUT:
+        RETVAL
+
 
  # End potential perl object code
 
