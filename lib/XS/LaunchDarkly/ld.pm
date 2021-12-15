@@ -2,44 +2,42 @@ package XS::LaunchDarkly::ld;
 require XSLoader;
 
 XSLoader::load();
+# Perl operates in the order of code layout - hence if we want to call XS code, we need to Load it first and write Perl below.
 
 sub buildLDClient {
+    # When using Arrow operator, the first argument is the left side of the arrow
+    # Hence for initialization, we call XS::LaunchDarkly::ld->buildLDClient($sdkKey, $timeout);
     my $class = shift;
-    # print "Class is $class\n";
+    # Shift takes the next parameter from the input variables.
     my $sdkKey = shift;
-    # print "SDK Key is $sdkKey\n";
     my $timeout = shift;
-    # print "Time out is $timeout\n";
 
+    # This calls the XS code that build into Perl Subroutine (which is different from the pure C code)
     my $ldClient = $class->new($sdkKey, $timeout);
 
+    # When we call new, what we get back is a Scalar variable that containes the client.
+    # And as far as I can tell, there is no multiple object variables in Perl. So if we want to return more stuff, make a hash for it.
     my $self = {
+        # We don't allow reading for the SDK Key in real SDKs. This is just a demo to show we can hold more variables.
         _sdkKey => $sdkKey,
         _client => $ldClient,
     };
+    
+    # This is the key statement to make sure other subroutine in this class is now available to this hash.
+    # Which enables we say <variable>->getSdkKey();
     bless $self, $class;
     return $self;
 }
 
 sub getSdkKey {
     my $this = shift;
-    print "Self is $this\n";
-    my $value = $this->{_sdkKey};
-    print "The Value is $value\n";
-    # my $sdkKeyValue = $this->$self{_sdkKey};
-    # print "SDK Key is $sdkKeyValue";
     return $this->{_sdkKey};
 }
 
 sub getBoolVariation {
     my $this = shift;
-    print "Self is $this\n";
-    my $client = $this->{_client};
-    print "Self.client is $client\n";
     my $flagKey = shift;
-    print "Flag Key is $flagKey\n";
     my $default = shift;
-    print "Default is $default\n";
 
     my $boolValue = $this->{_client}->get_bool_variation($flagKey, $default);
 

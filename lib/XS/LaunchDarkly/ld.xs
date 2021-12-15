@@ -213,13 +213,16 @@ PROTOTYPES: ENABLE
  # XS comments begin with " #" to avoid them being interpreted as pre-processor
  # directives
 
+ # This define the type mapping. Basically, we are saying the Perl package is a pointer object.
+ # This is the alternative syntax, to have the typemap inline instead of in a separate file.
+ # I don't know how to define typemap in a separate file yet.
 TYPEMAP: <<HERE
-LDClient *  T_PTROBJ
 XS::LaunchDarkly::ld    T_PTROBJ
 HERE
 
  # start potential perl object code
 
+ # XS is kind of magical, but basically it can call C code but have some utility like RETVAL to bridge the operation with Perl
 XS::LaunchDarkly::ld
 new (char * class, char * sdkKey, int timeout)
 CODE:
@@ -238,14 +241,7 @@ DESTROY (ldClient)
 CODE:
         free (ldClient);
 
-const char *
-get_string (ldClient)
-        XS::LaunchDarkly::ld ldClient;
-CODE:
-        RETVAL = "Louis test\n";
-OUTPUT:
-        RETVAL
-
+ # If it is a object method that we expect to be called by the arrow operator, the object need to be the first argument
 int
 is_initialized(ldClient)
         XS::LaunchDarkly::ld ldClient;
@@ -254,9 +250,11 @@ CODE:
 OUTPUT:
         RETVAL
 
+ # Here is a more C looking way to define the argument type, compare to above where the type comes after the paranthesis
 bool
 get_bool_variation(XS::LaunchDarkly::ld ldClient, char * flagKey, bool defaultValue)
 CODE:
+ # At this point, this line is still relying on the global user that is defined above
         RETVAL = LDBoolVariation(ldClient, user, flagKey, defaultValue, NULL);
 OUTPUT:
         RETVAL

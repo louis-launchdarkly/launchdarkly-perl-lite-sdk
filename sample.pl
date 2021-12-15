@@ -9,12 +9,12 @@ my $userKey = "123-456-789-000";
 my $ldClient = XS::LaunchDarkly::ld->buildLDClient($sdkKey, $timeout);
 
 print $ldClient;
-print "\n";
-# print $ldClient->buildLDClient($sdkKey, $timeout);
-print $ldClient->{_client}->get_string();
+# This line is calling a Perl native sub routine that is defined in ld.pm
 $ldClient->getSdkKey();
 print "Sleep for a bit\n";
 sleep(5);
+
+# This line is calling the XS generated sub routine that is defined in ld.xs, "generated to the Client object"-ish
 my $isInit = $ldClient->{_client}->is_initialized();
 
 if($isInit) {
@@ -44,6 +44,7 @@ XS::LaunchDarkly::ld::BuildCustomAttributes();
 # Optionally, set all attriutes private 
 #XS::LaunchDarkly::ld::ConfigSetAllAttributesPrivate(1);
 
+# Compare calling a perl sub routine with below, the XS generated sub routine
 my $boolFg = $ldClient->getBoolVariation("first-flag-in-ld", 0);
 if ($boolFg == 1) {
 	print "Louis Bool Variation: True\n";
