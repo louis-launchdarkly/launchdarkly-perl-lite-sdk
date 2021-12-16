@@ -36,10 +36,11 @@ sub getSdkKey {
 
 sub getBoolVariation {
     my $this = shift;
+    my $perlUserHash = shift;
     my $flagKey = shift;
     my $default = shift;
 
-    my $boolValue = $this->{_client}->get_bool_variation($flagKey, $default);
+    my $boolValue = $this->{_client}->get_bool_variation($perlUserHash->{_ldUser}, $flagKey, $default);
 
     return $boolValue;
 }

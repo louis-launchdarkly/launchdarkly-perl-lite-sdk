@@ -57,15 +57,6 @@ int ConfigSetEventsURI(char * URI) {
     return 1;
 }
 
-/* Set User Key */
-int UserNew(char * userkey) {
-    user = LDUserNew(userkey);
-    if (user == NULL)
-        return 0;
-
-    return 1;
-}
-
 /* Set Username - built in field */
 int SetUserName(char * username) {
     if (LDUserSetName(user, username) != 1)
@@ -200,8 +191,9 @@ int ClientClose() {
     return 1;
 }
 
-/* Louis test */
+/* Needed typedef to properly bind the LDClient C struct to the corresponding Perl object. */
 typedef struct LDClient * XS__LaunchDarkly__ld;
+typedef struct LDUser   * XS__LaunchDarkly__User;
 
 /* End of C Code */
 
@@ -218,6 +210,7 @@ PROTOTYPES: ENABLE
  # I don't know how to define typemap in a separate file yet.
 TYPEMAP: <<HERE
 XS::LaunchDarkly::ld    T_PTROBJ
+XS::LaunchDarkly::User    T_PTROBJ
 HERE
 
  # start potential perl object code
@@ -252,10 +245,10 @@ OUTPUT:
 
  # Here is a more C looking way to define the argument type, compare to above where the type comes after the paranthesis
 bool
-get_bool_variation(XS::LaunchDarkly::ld ldClient, char * flagKey, bool defaultValue)
+get_bool_variation(XS::LaunchDarkly::ld ldClient, XS::LaunchDarkly::User ldUser, char * flagKey, bool defaultValue)
 CODE:
  # At this point, this line is still relying on the global user that is defined above
-        RETVAL = LDBoolVariation(ldClient, user, flagKey, defaultValue, NULL);
+        RETVAL = LDBoolVariation(ldClient, ldUser, flagKey, defaultValue, NULL);
 OUTPUT:
         RETVAL
 
@@ -264,9 +257,6 @@ OUTPUT:
 
 int
 CreateClient(char * key, int timeout)
-
-int 
-UserNew(char * userkey)
 
 int 
 ConfigSetStream(bool stream)

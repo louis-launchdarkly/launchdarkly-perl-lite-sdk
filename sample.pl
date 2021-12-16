@@ -8,6 +8,15 @@ my $userKey = "123-456-789-000";
 
 my $ldClient = XS::LaunchDarkly::ld->buildLDClient($sdkKey, $timeout);
 
+my $user = XS::LaunchDarkly::User->buildLDUser("Louis");
+$user->set("name", "hello");
+$user->setCustom("go","east");
+my $key = $user->get("name");
+my $customKey = $user->getCustom("go");
+
+print "This is the name $key\n";
+print "This is the custom $customKey\n";
+
 print $ldClient;
 # This line is calling a Perl native sub routine that is defined in ld.pm
 $ldClient->getSdkKey();
@@ -23,29 +32,32 @@ if($isInit) {
 	print "Is not initialized\n";
 }
 
-# Create Client and Set User Key / Request Context ID
-XS::LaunchDarkly::ld::CreateClient($sdkKey, $timeout);
-XS::LaunchDarkly::ld::UserNew($userKey);
+print "$user\n";
+my $actualUser = $user->{_ldUser};
+print "$actualUser\n";
+# # Create Client and Set User Key / Request Context ID
+# # XS::LaunchDarkly::ld::CreateClient($sdkKey, $timeout);
+# XS::LaunchDarkly::ld::UserNew($userKey);
 
-# Set Username - Optional Custom Field
-XS::LaunchDarkly::ld::SetUserName("St. Glass");
+# # Set Username - Optional Custom Field
+# XS::LaunchDarkly::ld::SetUserName("St. Glass");
 
-# Set Custom attributes - any key/value pair
-XS::LaunchDarkly::ld::SetCustomAttribute("geo","northeast");
-XS::LaunchDarkly::ld::SetCustomAttribute("plan","platinum");
-XS::LaunchDarkly::ld::SetCustomAttribute("secret","yyz-yyz-yyz");
+# # Set Custom attributes - any key/value pair
+# XS::LaunchDarkly::ld::SetCustomAttribute("geo","northeast");
+# XS::LaunchDarkly::ld::SetCustomAttribute("plan","platinum");
+# XS::LaunchDarkly::ld::SetCustomAttribute("secret","yyz-yyz-yyz");
 
-# Set any custom attribute to private by referencing the key 
-XS::LaunchDarkly::ld::SetPrivateCustomAttribute("secret");
+# # Set any custom attribute to private by referencing the key 
+# XS::LaunchDarkly::ld::SetPrivateCustomAttribute("secret");
 
-# Once all your custom attributes are set, we need to build the object on the backend 
-XS::LaunchDarkly::ld::BuildCustomAttributes();
+# # Once all your custom attributes are set, we need to build the object on the backend 
+# XS::LaunchDarkly::ld::BuildCustomAttributes();
 
 # Optionally, set all attriutes private 
 #XS::LaunchDarkly::ld::ConfigSetAllAttributesPrivate(1);
 
 # Compare calling a perl sub routine with below, the XS generated sub routine
-my $boolFg = $ldClient->getBoolVariation("first-flag-in-ld", 0);
+my $boolFg = $ldClient->getBoolVariation($user, "first-flag-in-ld", 0);
 if ($boolFg == 1) {
 	print "Louis Bool Variation: True\n";
 }
@@ -54,13 +66,13 @@ else {
 }
 
 # Boolean flag example - include flag name and fallback value 
-my $boolFlag = XS::LaunchDarkly::ld::BoolVariation("first-flag-in-ld", 0);
-if ($boolFlag == 1) {
-	print "Bool Variation: True\n";
-}
-else {
-	print "Bool Variation: False\n";
-}
+# my $boolFlag = XS::LaunchDarkly::ld::BoolVariation("first-flag-in-ld", 0);
+# if ($boolFlag == 1) {
+# 	print "Bool Variation: True\n";
+# }
+# else {
+# 	print "Bool Variation: False\n";
+# }
 
 # Number flag example
 # my $intFlag = XS::LaunchDarkly::ld::IntVariation("number-flag", 0);
