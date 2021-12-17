@@ -42,6 +42,7 @@ sub setCustom {
     my $value = shift;
 
     $self{_custom}{$key} = $value;
+    $self->{_ldUser}->set_custom_attribute($key, $value);
 }
 
 sub get {

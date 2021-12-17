@@ -45,4 +45,26 @@ sub getBoolVariation {
     return $boolValue;
 }
 
+sub getIntVariation {
+    my $this = shift;
+    my $perlUserHash = shift;
+    my $flagKey = shift;
+    my $default = shift;
+
+    my $intValue = $this->{_client}->get_int_variation($perlUserHash->{_ldUser}, $flagKey, $default);
+
+    return $intValue;
+}
+
+sub closeClient {
+    my $this = shift;
+
+    # Again, I still am confused about how Perl map the corresponding object
+    # Because I map XS::LaunchDarkly::ld to LDClient in the XS code, when I need to free the object
+    # I need to do it on this class instead of the _client reference that I am holding (somehow)
+    my $retValue = $this->close_client();
+
+    return $retValue;
+}
+
 1;

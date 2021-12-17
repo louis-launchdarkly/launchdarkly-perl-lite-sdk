@@ -15,17 +15,6 @@ struct LDConfig *config;
 struct LDUser   *user;
 struct LDJSON   *custom;
 
-/* Create LD client */
-int CreateClient(char * key, int timeout) {
-    config = LDConfigNew(key);
-    client = LDClientInit(config, timeout);
-    if (LDClientIsInitialized(client) != 1) 
-        return 0;
-
-    custom = LDNewObject();
-    return 1;
-}
-
 /* To disable streaming, set to false */
 int ConfigSetStream(bool stream) {
     LDConfigSetStream(config, stream);
@@ -54,14 +43,6 @@ int ConfigSetEventsURI(char * URI) {
     if (LDConfigSetEventsURI(config, URI) != 1)
         return 0;
     
-    return 1;
-}
-
-/* Set Username - built in field */
-int SetUserName(char * username) {
-    if (LDUserSetName(user, username) != 1)
-        return 0;
-
     return 1;
 }
 
@@ -150,18 +131,6 @@ int ConfigSetAllAttributesPrivate(bool private) {
     return 1;
 }
 
-/* Bool Variation */
-bool BoolVariation(char *flagKey, bool fallback) {
-    LDBoolean flag_value = LDBoolVariation(client, user, flagKey, fallback, NULL);
-    return flag_value;
-}
-
-/* Int Variation */
-int IntVariation(char *flagKey, int fallback) {
-    int flag_value = LDIntVariation(client, user, flagKey, fallback, NULL);
-    return flag_value;
-}
-
 /* String variation */
 char * StringVariation(char *flagKey, char * fallback) {
     char * flag_value = LDStringVariation(client, user, flagKey, fallback, NULL);
@@ -179,14 +148,6 @@ int ClientFlush() {
 /* Free User */
 int UserFree() {
     LDUserFree(user);
-
-    return 1;
-}
-
-/* Free client */
-int ClientClose() {
-    if (LDClientClose(client) != 1)
-        return 0;
 
     return 1;
 }
@@ -247,11 +208,23 @@ OUTPUT:
 bool
 get_bool_variation(XS::LaunchDarkly::ld ldClient, XS::LaunchDarkly::User ldUser, char * flagKey, bool defaultValue)
 CODE:
- # At this point, this line is still relying on the global user that is defined above
         RETVAL = LDBoolVariation(ldClient, ldUser, flagKey, defaultValue, NULL);
 OUTPUT:
         RETVAL
 
+int
+get_int_variation(XS::LaunchDarkly::ld ldClient, XS::LaunchDarkly::User ldUser, char * flagKey, int defaultValue)
+CODE:
+        RETVAL = LDIntVariation(ldClient, ldUser, flagKey, defaultValue, NULL);
+OUTPUT:
+        RETVAL
+
+int
+close_client(XS::LaunchDarkly::ld ldClient)
+CODE:
+        RETVAL = LDClientClose(ldClient);
+OUTPUT:
+        RETVAL
 
  # End potential perl object code
 
@@ -269,9 +242,6 @@ ConfigSetBaseURI(char * URI)
 
 int
 ConfigSetEventsURI(char * URI)
-
-int 
-SetUserName(char * username)
 
 int 
 UserSetCountry(char * country)
@@ -318,5 +288,3 @@ ClientFlush()
 int 
 UserFree()
 
-int 
-ClientClose()

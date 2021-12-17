@@ -24,7 +24,8 @@ $~  make install
 ```
 
 ## Run 
+We need to load both the ld modules for this to run.
 
 ```
-$~  perl -MXS::LaunchDarkly::ld sample.pl
+$~  perl -MXS::LaunchDarkly::ld -MXS::LaunchDarkly::User sample.pl
 ```
