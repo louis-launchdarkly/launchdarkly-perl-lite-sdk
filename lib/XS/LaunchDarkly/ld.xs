@@ -93,29 +93,6 @@ int UserSetAnonymous(bool anon) {
     return 1;
 }
 
-/* Set Custom Attribute */
-int SetCustomAttribute(char * key, char * value) {
-    struct LDJSON *tmp;
-    struct LDJSON *values = LDNewArray();
-
-    tmp = LDNewText(value);
-    if (tmp == NULL)
-        return 0;
-    if (LDArrayPush(values, tmp) != 1)
-        return 0;
-    if (LDObjectSetKey(custom, key, values) != 1)
-        return 0;
-
-    return 1;
-}
-
-/* Build Custom Attributes */
-int BuildCustomAttributes() {
-    LDUserSetCustom(user, custom);
-
-    return 1;
-}
-
 /* Set Private Custom Attribute */
 int SetPrivateCustomAttribute(char * key) {
     if (LDConfigAddPrivateAttribute(config, key) != 1)
@@ -228,9 +205,6 @@ OUTPUT:
 
  # End potential perl object code
 
-int
-CreateClient(char * key, int timeout)
-
 int 
 ConfigSetStream(bool stream)
 
@@ -261,23 +235,11 @@ UserSetLastName(char * lastname)
 int 
 UserSetAnonymous(bool anon)
 
-int 
-SetCustomAttribute(char * key, char * value)
-
-int
-BuildCustomAttributes()
-
 int
 SetPrivateCustomAttribute(char * key)
 
 int 
 ConfigSetAllAttributesPrivate(bool private)
-
-bool
-BoolVariation(char *flagKey, bool fallback)
-
-int 
-IntVariation(char *flagKey, int fallback)
 
 char * 
 StringVariation(char *flagKey, char * fallback)

@@ -7,7 +7,6 @@ XSLoader::load();
 
 sub buildLDUser {
     my $class = shift;
-    print "Class is $class\n";
 
     # Like the SDK typical API, the constructor only takes in a userKey
     my $userKey = shift;
